@@ -31,6 +31,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { OTP } from "vue3-otp-input-field";
+import axios from '@/plugins/axios';
 const router = useRouter()
 const store = useStore()
 const loading = ref(false)
@@ -38,16 +39,16 @@ const otp = ref([])
 
 const user = computed(() => store.state.user)
 
-if (!user.value.numberPhone) {
-    router.push({ name: 'Home' })
-}
-
 const seconds = ref(0)
 const minutes = ref(0)
 
 // ineterval timer for otp code 2 minutes
 
-
+onMounted(() => {
+    if (!user.value.numberPhone) {
+        router.push({ name: 'Home' })
+    }
+})
 onMounted(() => {
     minutes.value = 2
     seconds.value = 0
@@ -56,7 +57,7 @@ onMounted(() => {
         if (seconds.value === 0) {
             if (minutes.value === 0) {
                 clearInterval(timer)
-                router.push({ name: 'Home' })
+                // router.push({ name: 'Home' })
             } else {
                 minutes.value--
                 seconds.value = 59
@@ -100,20 +101,44 @@ const submit = () => {
 
     const code = otp.value.join('')
 
-    window.confirmationResult.confirm(code).then((result) => {
-        store.commit('setUser', {
-            ...user.value,
-            verified: true,
-        })
-
+    if (window.confirmationResult === undefined) {
         store.commit('setSnackbar', {
             type: true,
-            color: 'success',
-            message: 'Xác thực thành công.',
+            color: 'error',
+            message: 'Vui lòng đăng ký số điện thoại trước.',
         })
         loading.value = false
+        return
+    }
 
-        router.push({ name: 'information' })
+    window.confirmationResult.confirm(code).then((result) => {
+
+        axios.post('/insert-user', {
+            ...user.value,
+            verified: true,
+        }).then(res => {
+            store.commit('setUser', {
+                ...user.value,
+                verified: true,
+            })
+            store.commit('setSnackbar', {
+                type: true,
+                color: 'success',
+                message: 'Xác thực thành công.',
+            })
+            loading.value = false
+
+            router.push({ name: 'image' })
+        }).catch(err => {
+            console.log(err)
+            loading.value = false
+            store.commit('setSnackbar', {
+                type: true,
+                color: 'error',
+                message: 'Có lỗi xảy ra, vui lòng thử lại.',
+            })
+        })
+
     }).catch((error) => {
         console.log(error);
         loading.value = false
@@ -124,6 +149,8 @@ const submit = () => {
         })
     });
 }
+
+
 
 
 </script>

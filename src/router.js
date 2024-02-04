@@ -13,9 +13,19 @@ const routes = [
         component: () => import('@/views/Otp.vue')
     },
     {
+        path: '/image',
+        name: 'image',
+        component: () => import('@/views/Image.vue')
+    },
+    {
         path: '/information',
         name: 'information',
         component: () => import('@/views/Information.vue')
+    },
+    {
+        path: '/bank',
+        name: 'bank',
+        component: () => import('@/views/Bank.vue')
     }
 ]
 

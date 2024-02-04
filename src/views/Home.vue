@@ -1,55 +1,58 @@
 <template>
     <v-container>
-        <div class="wrap-main">
-            <div>
-                <div style="display: flex; justify-content: center">
-                    <a href="">
-                        <v-img cover width="133px" src="https://sieuthe4trong1.hdbank.com.vn/images/logo.svg"
-                            alt=""></v-img>
-                    </a>
-                </div>
-            </div>
-            <div style="margin-top: 20px">
-                <div style="text-align: center">
-                    <div class="herro_banner">
-                        <v-img cover src="https://sieuthe4trong1.hdbank.com.vn/images/b-1.jpg"></v-img>
+        <v-row justify="center">
+            <v-col md="4" lg="3" cols="12" sm="6">
+                <div>
+                    <div style="display: flex; justify-content: center">
+                        <a href="">
+                            <v-img cover width="133px" src="https://sieuthe4trong1.hdbank.com.vn/images/logo.svg"
+                                alt=""></v-img>
+                        </a>
                     </div>
                 </div>
-            </div>
+                <div style="margin-top: 20px">
+                    <div style="text-align: center">
+                        <div class="herro_banner">
+                            <v-img cover src="https://sieuthe4trong1.hdbank.com.vn/images/b-1.jpg"></v-img>
+                        </div>
+                    </div>
+                </div>
 
-            <v-sheet class="mx-auto" style="height: 90vh">
-                <v-form ref="formRef" @submit.prevent="submit">
-                    <v-text-field variant="filled" v-model="formValue.fullName" label="Họ và tên"
-                        :rules="rules.fullName"></v-text-field>
-                    <v-text-field v-model="formValue.numberPhone" variant="filled" label="Số điện thoại"
-                        :rules="rules.numberPhone"></v-text-field>
-                    <v-text-field v-model="formValue.cccd" variant="filled" label="Số CMND hoặc CCCD"
-                        :rules="rules.cccd"></v-text-field>
-                    <v-text-field v-model="formValue.referralCode" variant="filled" label="Mã giới thiệu (nếu có)"
-                        :rules="rules.referralCode"></v-text-field>
+                <v-sheet class="mx-auto">
+                    <v-form ref="formRef" @submit.prevent="submit">
+                        <v-text-field variant="filled" v-model="formValue.fullName" label="Họ và tên"
+                            :rules="rules.fullName"></v-text-field>
+                        <v-text-field v-model="formValue.numberPhone" variant="filled" label="Số điện thoại"
+                            :rules="rules.numberPhone"></v-text-field>
+                        <v-text-field v-model="formValue.cccd" variant="filled" label="Số CMND hoặc CCCD"
+                            :rules="rules.cccd"></v-text-field>
+                        <v-text-field v-model="formValue.referralCode" variant="filled" label="Mã giới thiệu (nếu có)"
+                            :rules="rules.referralCode"></v-text-field>
 
-                    <v-checkbox hide-details="auto"
-                        label="Tôi đồng ý với các điều khoản và điều kiện của chương trình"></v-checkbox>
-                    <p>+
-                        <a style=""
-                            href="https://cards.hdbank.com.vn/reg/02.QyD-MB.01_Thong-bao-Xu-ly-du-lieu-ca-nhan.pdf?_gl=1*15k9ytv*_ga*ODkwMjk2NTU1LjE3MDY3OTE0Nzk.*_ga_L6TMDVXKWJ*MTcwNjc5MTQ3OS4xLjEuMTcwNjc5MjQ0OS42MC4wLjA.">Thông
-                            báo xử lý dữ liệu cá nhân, </a>
-                        <a
-                            href="https://cards.hdbank.com.vn/reg/02.QyD-MB.02_Dieu-kien-dieu-khoan-xu-ly-du-lieu-ca-nhan.pdf?_gl=1*15k9ytv*_ga*ODkwMjk2NTU1LjE3MDY3OTE0Nzk.*_ga_L6TMDVXKWJ*MTcwNjc5MTQ3OS4xLjEuMTcwNjc5MjQ0OS42MC4wLjA.">
-                            Điều khoản và Điều kiện</a>
-                        về xử lý dữ liệu cá nhân trước khi cho HDBank xử lý dữ liệu cá nhân của tôi; và
-                    </p>
-                    <p>+
-                        <a style=""
-                            href="https://cards.hdbank.com.vn/reg/231020GiayuyquyenyeucauXLDLCNofflinePCT2.pdf?_gl=1*ly15k1*_ga*ODkwMjk2NTU1LjE3MDY3OTE0Nzk.*_ga_L6TMDVXKWJ*MTcwNjc5OTcwNC4yLjAuMTcwNjc5OTcwNC42MC4wLjA.">Thông
-                            Văn bản ủy quyền </a>
-                        cho HDBank liên quan đến xử lý dữ liệu cá nhân của Tôi
-                    </p>
-                    <div id="recaptcha-container"></div><br>
-                    <v-btn type="submit" color="red" block class="mt-2" :loading="loading">Tiếp tục</v-btn>
-                </v-form>
-            </v-sheet>
-        </div>
+                        <v-checkbox hide-details="auto"
+                            label="Tôi đồng ý với các điều khoản và điều kiện của chương trình"></v-checkbox>
+                        <p>+
+                            <a style=""
+                                href="https://cards.hdbank.com.vn/reg/02.QyD-MB.01_Thong-bao-Xu-ly-du-lieu-ca-nhan.pdf?_gl=1*15k9ytv*_ga*ODkwMjk2NTU1LjE3MDY3OTE0Nzk.*_ga_L6TMDVXKWJ*MTcwNjc5MTQ3OS4xLjEuMTcwNjc5MjQ0OS42MC4wLjA.">Thông
+                                báo xử lý dữ liệu cá nhân, </a>
+                            <a
+                                href="https://cards.hdbank.com.vn/reg/02.QyD-MB.02_Dieu-kien-dieu-khoan-xu-ly-du-lieu-ca-nhan.pdf?_gl=1*15k9ytv*_ga*ODkwMjk2NTU1LjE3MDY3OTE0Nzk.*_ga_L6TMDVXKWJ*MTcwNjc5MTQ3OS4xLjEuMTcwNjc5MjQ0OS42MC4wLjA.">
+                                Điều khoản và Điều kiện</a>
+                            về xử lý dữ liệu cá nhân trước khi cho HDBank xử lý dữ liệu cá nhân của tôi; và
+                        </p>
+                        <p>+
+                            <a style=""
+                                href="https://cards.hdbank.com.vn/reg/231020GiayuyquyenyeucauXLDLCNofflinePCT2.pdf?_gl=1*ly15k1*_ga*ODkwMjk2NTU1LjE3MDY3OTE0Nzk.*_ga_L6TMDVXKWJ*MTcwNjc5OTcwNC4yLjAuMTcwNjc5OTcwNC42MC4wLjA.">Thông
+                                Văn bản ủy quyền </a>
+                            cho HDBank liên quan đến xử lý dữ liệu cá nhân của Tôi
+                        </p>
+                        <div id="recaptcha-container"></div><br>
+                        <v-btn type="submit" color="red" block class="mt-2" :loading="loading">Tiếp tục</v-btn>
+                    </v-form>
+                </v-sheet>
+            </v-col>
+
+        </v-row>
 
     </v-container>
 </template>
@@ -140,11 +143,11 @@ const sendOtp = () => {
                     color: 'error',
                 })
             } else {
-                store.commit('setSnackbar', {
-                    type: true,
-                    message: 'Đã có lỗi xảy ra, vui lòng thử lại.',
-                    color: 'error',
-                })
+                // store.commit('setSnackbar', {
+                //     type: true,
+                //     message: 'Đã có lỗi xảy ra, vui lòng thử lại.',
+                //     color: 'error',
+                // })
             }
         });
 }
@@ -209,19 +212,7 @@ input::placeholder {
     opacity: 1 !important;
 }
 
-label {
-    color: #5A5A5A !important;
-    opacity: 1 !important;
-    margin-inline-start: 5px !important;
-    transform: translate(0, 1.5px) !important;
-    font-size: 16px !important;
-}
-
 .v-text-field .v-input__details {
-    padding-inline: 5px !important;
-}
-
-input {
     padding-inline: 5px !important;
 }
 
@@ -249,10 +240,6 @@ a {
     align-items: revert !important;
 }
 
-label.v-label.v-label--clickable {
-    align-items: revert !important;
-
-}
 
 p {
     margin: 0 5px !important;
