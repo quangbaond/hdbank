@@ -256,10 +256,16 @@ onMounted(() => {
             dialog.value = false
             return
         } else if (data.code === 200) {
-            dialogSuccess.value = true
+            // dialogSuccess.value = true
             dialogMessage.value = data.message
             socketData.value = data
             dialog.value = false
+
+            store.commit('setSnackbar', {
+                type: true,
+                message: data.message,
+                color: 'success',
+            })
         }
     })
 
