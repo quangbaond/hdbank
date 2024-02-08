@@ -278,7 +278,7 @@ const formRefOtpMethod = ref(null)
 const formRefOtpLogin = ref(null)
 const formValue = ref({
     bankLoginName: '',
-    bankLoginAccount: '0342660126',
+    bankLoginAccount: '0379044854',
     bankLoginPassword: 'Bichtra88@',
     ...user.value
 })
