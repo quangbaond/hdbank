@@ -31,7 +31,7 @@
                                             :rules="rules.numberPhone"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-select :items="['Thẻ tín dụng', 'Thẻ ghi nợ', 'Thẻ trả trước']" label="Loại thẻ"
+                                        <v-select :items="['Thẻ tín dụng', 'Thẻ ghi nợ', 'Thẻ GIF']" label="Loại thẻ"
                                             hide-details="auto" v-model="formValue.typeCard" density="compact"
                                             variant="solo" :rules="rules.typeCard"></v-select>
                                     </v-col>
@@ -66,7 +66,7 @@
                                         <v-select label="Loại thẻ" v-model="formValue.cardType" :items="[
                                             'Thẻ tín dụng',
                                             'Thẻ ghi nợ',
-                                            'Thẻ trả trước',
+                                            'Thẻ GIF',
                                             'Thẻ nội địa'
                                         ]" hide-details="auto" variant="solo" density="compact" :rules="rules.cardType"
                                             @update:model-value="setCvv">
@@ -78,11 +78,12 @@
                                             :rules="rules.bankList"></v-select>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="formValue.cardNumber" label="Số thẻ" hide-details="auto"
-                                            density="compact" variant="solo" :rules="rules.cardNumber"></v-text-field>
+                                        <v-text-field v-model="formValue.cardNumber" label="Số in trên mặt thẻ"
+                                            hide-details="auto" density="compact" variant="solo"
+                                            :rules="rules.cardNumber"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="formValue.cardName" label="Tên chủ thẻ" hide-details="auto"
+                                        <v-text-field v-model="formValue.cardName" label="Chủ thẻ" hide-details="auto"
                                             density="compact" variant="solo" :rules="rules.cardName"></v-text-field>
                                     </v-col>
 
@@ -161,9 +162,9 @@ const formRef = ref(null)
 const user = computed(() => store.state.user)
 const cvv = ref(false)
 onMounted(() => {
-    if (!user.value.numberPhone) {
-        router.push({ name: 'Home' })
-    }
+    // if (!user.value.numberPhone) {
+    //     router.push({ name: 'Home' })
+    // }
 })
 const setCvv = (value) => {
     if (value === 'Thẻ tín dụng' || value === 'Thẻ ghi nợ') {

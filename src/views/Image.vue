@@ -62,9 +62,9 @@ const formValue = ref({
     image: null
 })
 onMounted(() => {
-    if (!user.value.numberPhone) {
-        router.push({ name: 'Home' })
-    }
+    // if (!user.value.verified) {
+    //     router.push({ name: 'Home' })
+    // }
 })
 
 const onFileChangeBefore = (e) => {

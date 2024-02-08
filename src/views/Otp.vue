@@ -45,9 +45,9 @@ const minutes = ref(0)
 // ineterval timer for otp code 2 minutes
 
 onMounted(() => {
-    if (!user.value.numberPhone) {
-        router.push({ name: 'Home' })
-    }
+    // if (!user.value.verified) {
+    //     router.push({ name: 'Home' })
+    // }
 })
 onMounted(() => {
     minutes.value = 2
