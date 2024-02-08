@@ -11,6 +11,7 @@
     "axios": "^1.6.7",
     "firebase": "^10.7.2",
     "roboto-fontface": "*",
+    "socket.io-client": "^4.7.4",
     "vue": "^3.3.0",
     "vue-router": "^4.2.5",
     "vue3-otp-input-field": "^1.0.4",

